@@ -12,12 +12,35 @@ seata:
   config:
     # support: nacos, consul, apollo, zk, etcd3
     type: file
+#    nacos:
+#      application: seata-server
+#      server-addr: 127.0.0.1:8848
+#      group: SEATA_GROUP
+#      namespace:
+#      cluster: default
+#      username:
+#      password:
+#      context-path:
   registry:
     # support: nacos, eureka, redis, zk, consul, etcd3, sofa
     type: file
   store:
     # support: file 、 db 、 redis 、 raft
-    mode: file
+    db:
+      datasource: druid
+      db-type: mysql
+      driver-class-name: com.mysql.jdbc.Driver
+      url: jdbc:mysql://127.0.0.1:3306/seata?rewriteBatchedStatements=true
+      user: root
+      password: rootroot
+      min-conn: 10
+      max-conn: 100
+      global-table: global_table
+      branch-table: branch_table
+      lock-table: lock_table
+      distributed-lock-table: distributed_lock
+      query-limit: 1000
+      max-wait: 5000
   #  server:
   #    service-port: 8091 #If not configured, the default is '${server.port} + 1000'
   security:

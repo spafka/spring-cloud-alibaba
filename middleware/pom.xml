@@ -9,8 +9,12 @@
         <version>2.5.12</version>
         <relativePath/>
     </parent>
+    <packaging>pom</packaging>
+
 
     <artifactId>middleware</artifactId>
+    <groupId>com.alibaba.cloud</groupId>
+    <version>1.0.0</version>
 
     <properties>
         <maven.compiler.source>1.8</maven.compiler.source>

@@ -1,0 +1,21 @@
+@startuml
+title Hidesk前端菜单控制
+
+participant "Hidesk" as FE order 2
+participant "统一架构" as BE order 3
+participant "用户" as U order 1
+participant devUC order 4
+
+
+U ->FE : 选择租户，选择版本
+FE ->> BE: 查询用户权限 GET /gw/plantform/:projectId/permissions
+BE -> devUC: 查询project 角色，权限点
+devUC --> BE: 返回资源，角色
+BE -> devUC: 查询用户角色
+devUC --> BE: 返回角色
+BE->BE: 组装用户权限点
+BE --> FE: 返回[权限列表]
+FE ->> FE: 解析 Permissions
+FE ->> FE: 生成菜单
+FE ->> U: 展示菜单
+@enduml

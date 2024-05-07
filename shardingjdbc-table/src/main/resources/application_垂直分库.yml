@@ -1,0 +1,27 @@
+spring:
+    application:
+        name: sharding-jdbc
+    shardingsphere:
+        datasource:
+            db1:
+                driver-class-name: com.mysql.jdbc.Driver
+                password: QiDian@666
+                type: com.zaxxer.hikari.HikariDataSource
+                url: jdbc:mysql://192.168.52.10:3306/msb_payorder_db?characterEncoding=UTF-8&useSSL=false
+                username: root
+            db2:
+                driver-class-name: com.mysql.jdbc.Driver
+                password: QiDian@666
+                type: com.zaxxer.hikari.HikariDataSource
+                url: jdbc:mysql://192.168.52.11:3306/msb_user_db?characterEncoding=UTF-8&useSSL=false
+                username: root
+            names: db1,db2
+        props:
+            sql-show: true
+        rules:
+            sharding:
+                tables:
+                    pay_order:
+                        actual-data-nodes: db1.pay_order
+                    users:
+                        actual-data-nodes: db2.users

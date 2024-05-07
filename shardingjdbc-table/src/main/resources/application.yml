@@ -1,0 +1,67 @@
+spring:
+    application:
+        name: sharding-jdbc
+    shardingsphere:
+        datasource:
+            db0:
+                driver-class-name: com.mysql.jdbc.Driver
+                jdbc-url: jdbc:mysql://localhost:3306/msb_course_db0?useUnicode=true&characterEncoding=utf-8&useSSL=false
+                password: rootroot
+                type: com.zaxxer.hikari.HikariDataSource
+                username: root
+
+            db1:
+                driver-class-name: com.mysql.jdbc.Driver
+                jdbc-url: jdbc:mysql://localhost:3306/msb_course_db1?useUnicode=true&characterEncoding=utf-8&useSSL=false
+                password: rootroot
+                type: com.zaxxer.hikari.HikariDataSource
+                username: root
+            names: db0,db1
+        props:
+            sql-show: true
+        rules:
+            sharding:
+                binding-tables:
+                - t_course,t_course_section
+                key-generators:
+                    alg-snowflake:
+                        type: SNOWFLAKE
+                sharding-algorithms:
+                    table-hash-mod:
+                        props:
+                            sharding-count: 2
+                        type: HASH_MOD
+                    table-mod:
+                        props:
+                            sharding-count: 2
+                        type: MOD
+                tables:
+                    t_course:
+                        actual-data-nodes: db$->{0..1}.t_course_$->{0..1}
+                        database-strategy:
+                            standard:
+                                sharding-algorithm-name: table-mod
+                                sharding-column: user_id
+                        key-generate-strategy:
+                            column: cid
+                            key-generator-name: alg-snowflake
+                        table-strategy:
+                            standard:
+                                sharding-algorithm-name: table-hash-mod
+                                sharding-column: corder_no
+                    t_course_section:
+                        actual-data-nodes: db$->{0..1}.t_course_section_$->{0..1}
+                        database-strategy:
+                            standard:
+                                sharding-algorithm-name: table-mod
+                                sharding-column: user_id
+                        key-generate-strategy:
+                            column: id
+                            key-generator-name: alg-snowflake
+                        table-strategy:
+                            standard:
+                                sharding-algorithm-name: table-hash-mod
+                                sharding-column: corder_no
+    datasource:
+        hikari:
+            idle-timeout:

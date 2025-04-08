@@ -16,6 +16,7 @@
 
 package com.alibaba.cloud.examples;
 
+import java.util.Arrays;
 import java.util.Collections;
 
 import com.alibaba.cloud.circuitbreaker.sentinel.SentinelCircuitBreakerFactory;
@@ -37,37 +38,48 @@ import org.springframework.web.client.RestTemplate;
 @SpringBootApplication
 public class ServiceApplication {
 
-	@Bean
-	@SentinelRestTemplate(blockHandler = "handleException",
-			blockHandlerClass = ExceptionUtil.class)
-	public RestTemplate restTemplate() {
-		return new RestTemplate();
-	}
+    @Bean
+    @SentinelRestTemplate(blockHandler = "handleException",
+            blockHandlerClass = ExceptionUtil.class)
+    public RestTemplate restTemplate() {
+        return new RestTemplate();
+    }
 
-	@Bean
-	public RestTemplate restTemplate2() {
-		return new RestTemplate();
-	}
+    @Bean
+    public RestTemplate restTemplate2() {
+        return new RestTemplate();
+    }
 
-	@Bean
-	public Converter myConverter() {
-		return new JsonFlowRuleListConverter();
-	}
+    @Bean
+    public Converter myConverter() {
+        return new JsonFlowRuleListConverter();
+    }
 
-	@Bean
-	public Customizer<SentinelCircuitBreakerFactory> defaultConfig() {
-		return factory -> {
-			factory.configureDefault(
-					id -> new SentinelConfigBuilder().resourceName(id)
-							.rules(Collections.singletonList(new DegradeRule(id)
-									.setGrade(RuleConstant.DEGRADE_GRADE_RT).setCount(100)
-									.setTimeWindow(10)))
-							.build());
-		};
-	}
+    @Bean
+    public Customizer<SentinelCircuitBreakerFactory> defaultConfig() {
+        return factory -> {
+            factory.configureDefault(
+                    id -> new SentinelConfigBuilder().resourceName(id)
+                            .rules(Arrays.asList(new DegradeRule(id)
+                                            .setGrade(RuleConstant.DEGRADE_GRADE_EXCEPTION_RATIO)
+                                            .setCount(0.2)
+                                            .setTimeWindow(10)
+                                            .setMinRequestAmount(5)
+                                            .setStatIntervalMs(10000)
+                                    ,
+                                    new DegradeRule(id)
+                                            .setGrade(RuleConstant.DEGRADE_GRADE_RT)
+                                            .setCount(5000)
+                                            .setTimeWindow(10000)
+                                            .setMinRequestAmount(5)
+                                            .setSlowRatioThreshold(0.1)
+                                            .setStatIntervalMs(60000)
+                            )).build());
+        };
+    }
 
-	public static void main(String[] args) {
-		SpringApplication.run(ServiceApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(ServiceApplication.class, args);
+    }
 
 }

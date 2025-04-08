@@ -108,6 +108,7 @@
     <modules>
         <module>spring-cloud-alibaba-examples</module>
         <module>middleware</module>
+        <module>sharding</module>
     </modules>
 
     <dependencyManagement>
